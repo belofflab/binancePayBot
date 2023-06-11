@@ -1,0 +1,11 @@
+[Unit]
+Description=TeleBot service
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory=/home/binancePayBot
+ExecStart=/home/binancePayBot/venv/bin/python bot.py
+[Install]
+WantedBy=multi-user.target
