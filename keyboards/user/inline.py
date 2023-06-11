@@ -2,21 +2,21 @@ from database import models
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.callback_data import CallbackData
 
-delivery_cd = CallbackData("show_delivery", "level", "name")
+delivery_cd = CallbackData("show_delivery", "level", "name", "mode")
 
-def make_delivery_cd(level, name="0"):
-    return delivery_cd.new(level=level, name=name)
+def make_delivery_cd(level, name="0", mode="0"):
+    return delivery_cd.new(level=level, name=name, mode=mode)
 
 async def refill_balance_keyboard(payment_url, merchantTradeNo):
 
     markup = InlineKeyboardMarkup()
     markup.add(
         InlineKeyboardButton(
-            text='Пополнить',
+            text='Refill',
             url=payment_url
         ),
         InlineKeyboardButton(
-            text='Отмена',
+            text='Cancel',
             callback_data=f'cancel_payment#{merchantTradeNo}'
         )
     )
@@ -28,7 +28,7 @@ async def refill_set_balance_keyboard():
     markup = InlineKeyboardMarkup()
     markup.add(
         InlineKeyboardButton(
-            text='Отмена',
+            text='Cancel',
             callback_data='cancel_refill_set'
         )
     )
@@ -39,9 +39,9 @@ async def menu_keyboard():
     CURRENT_LEVEL = 0
     markup = InlineKeyboardMarkup(row_width=2)
     buttons = [
-        {'text': 'Сгенерировать PDF!', 'callback_data': make_delivery_cd(CURRENT_LEVEL + 1)},
-        {'text': 'Профиль', 'callback_data': 'profile'},
-        {'text': 'Поддержка', 'url': 'https://t.me/meow_tech'},
+        {'text': 'Generate PDF!', 'callback_data': make_delivery_cd(CURRENT_LEVEL + 1)},
+        {'text': 'Profile', 'callback_data': 'profile'},
+        {'text': 'Support', 'url': 'https://t.me/meow_tech'},
     ]
     for idx, button in enumerate(buttons):
         if idx == 1:
@@ -56,8 +56,8 @@ async def profile_keyboard():
 
     markup = InlineKeyboardMarkup()
     buttons = [
-        {'text': 'Пополнить', 'callback_data': 'refill'},
-        {'text': 'Назад', 'callback_data': make_delivery_cd(level=0)}
+        {'text': 'Refill', 'callback_data': 'refill'},
+        {'text': 'Back', 'callback_data': make_delivery_cd(level=0)}
     ]
     for button in buttons:
         markup.insert(InlineKeyboardButton(**button))
@@ -68,9 +68,9 @@ async def deliveries_keyboard():
     CURRENT_LEVEL = 1
     markup = InlineKeyboardMarkup(row_width=3)
     deliveries = [
-        {'text': 'usp', 'callback_data': make_delivery_cd(level=CURRENT_LEVEL + 1, name="usd")},
-        {'text': 'usps', 'callback_data': make_delivery_cd(level=CURRENT_LEVEL + 1, name="usds")},
-        {'text': 'fedex', 'callback_data': make_delivery_cd(level=CURRENT_LEVEL + 1, name="fedex")}
+        {'text': 'Usp', 'callback_data': make_delivery_cd(level=CURRENT_LEVEL + 1, name="usp")},
+        {'text': 'Usps', 'callback_data': make_delivery_cd(level=CURRENT_LEVEL + 1, name="usps")},
+        {'text': 'Fedex', 'callback_data': make_delivery_cd(level=CURRENT_LEVEL + 1, name="fedex")}
     ]
 
     for delivery in deliveries:
@@ -78,21 +78,44 @@ async def deliveries_keyboard():
 
     markup.row(
         InlineKeyboardButton(
-        text='Назад',
+            text='Back',
+            callback_data=make_delivery_cd(CURRENT_LEVEL - 1)
+        )
+    )
+
+    return markup
+
+async def delivery_method_keyboard(name):
+    CURRENT_LEVEL = 2
+    markup = InlineKeyboardMarkup(row_width=2)
+
+    buttons = [
+        {'text': 'Auto', 'callback_data': make_delivery_cd(level=CURRENT_LEVEL + 1, name=name, mode="auto")},
+        {'text': 'Manual', 'callback_data': make_delivery_cd(level=CURRENT_LEVEL + 1, name=name, mode="manual")}
+    ]
+
+    for button in buttons:
+        markup.insert(
+            InlineKeyboardButton(**button)
+        )
+
+    markup.row(
+        InlineKeyboardButton(
+        text='Back',
         callback_data=make_delivery_cd(CURRENT_LEVEL - 1)
         )
     )
 
     return markup
 
-async def delivery_keyboard():
-    CURRENT_LEVEL = 2
-    markup = InlineKeyboardMarkup()
+async def delivery_keyboard(name, mode):
+    CURRENT_LEVEL = 3
+    markup = InlineKeyboardMarkup(row_width=2)
 
-    markup.add(
+    markup.row(
         InlineKeyboardButton(
-        text='Назад',
-        callback_data=make_delivery_cd(CURRENT_LEVEL - 1)
+        text='Back',
+        callback_data=make_delivery_cd(CURRENT_LEVEL - 1, name=name)
         )
     )
 

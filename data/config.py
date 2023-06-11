@@ -12,3 +12,6 @@ if os.path.exists(ENV_FILE):
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 DATABASE_URL = os.getenv('DATABASE_URL')
 CHANNEL_ID= int(os.getenv('CHANNEL_ID'))
+
+BINANCEPAY_KEY = os.getenv('BINANCEPAY_KEY')
+BINANCEPAY_SECRET = os.getenv('BINANCEPAY_SECRET')
